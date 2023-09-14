@@ -3,9 +3,11 @@
  */
 
 import * as main from '../src/main'
-import { vi, describe, it, expect } from "vitest";
+import { vi, describe, it, expect } from 'vitest'
 // Mock the action's entrypoint
-const runMock = vi.spyOn(main, 'run').mockImplementation(() => Promise.resolve())
+const runMock = vi
+  .spyOn(main, 'run')
+  .mockImplementation(() => Promise.resolve())
 
 describe('index', () => {
   it('calls run when imported', async () => {

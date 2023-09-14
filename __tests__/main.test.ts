@@ -10,9 +10,9 @@ import { vi, describe, beforeEach, it, expect } from 'vitest'
 import * as core from '@actions/core'
 import * as main from '../src/main'
 import { format } from 'date-fns'
-import * as zx from "zx";
-import path from 'path';
-import { formatInTimeZone } from 'date-fns-tz';
+import * as zx from 'zx'
+import path from 'path'
+import { formatInTimeZone } from 'date-fns-tz'
 
 // Mock the GitHub Actions core library
 const debugMock = vi.spyOn(core, 'debug')
@@ -23,14 +23,14 @@ const setOutputMock = vi.spyOn(core, 'setOutput')
 // @ts-expect-error String.raw
 const $Mock = vi.spyOn(zx, '$').mockImplementation((...args) => {
   // @ts-expect-error String.raw
-  const str = String.raw(...args);
-  console.log(str);
+  const str = String.raw(...args)
+  console.log(str)
   return str
-});
+})
 
 // Mock the action's main function
 const runMock = vi.spyOn(main, 'run')
-const MOCK_DB_URL = 'postgres://postgres:password@127.0.0.1:5432/postgres' as const
+const MOCK_DB_URL = 'postgres://postgres:password@127.0.0.1:5432/postgres'
 
 // Other utilities
 const timeRegex = /^\d{2}:\d{2}:\d{2}/
@@ -57,50 +57,59 @@ describe('action', () => {
 
     await main.run()
     expect(runMock).toHaveReturned()
-    const expectPathRegex = new RegExp(`backup/${formatInTimeZone(new Date(), 'UTC', "yyyy-MM-dd'T'")}\\d{2}:\\d{2}:\\d{2}Z`)
+    const expectPathRegex = new RegExp(
+      `backup/${formatInTimeZone(
+        new Date(),
+        'UTC',
+        "yyyy-MM-dd'T'"
+      )}\\d{2}:\\d{2}:\\d{2}Z`
+    )
     expect(debugMock).toHaveBeenNthCalledWith(1, `Database url: ${MOCK_DB_URL}`)
-    expect(debugMock).toHaveBeenNthCalledWith(2, expect.stringMatching(expectPathRegex))
-
-    expect($Mock).to.toHaveNthReturnedWith(1,
-      expect.stringMatching(new RegExp(`--db-url '${MOCK_DB_URL}'`)),
+    expect(debugMock).toHaveBeenNthCalledWith(
+      2,
+      expect.stringMatching(expectPathRegex)
     )
 
+    expect($Mock).to.toHaveNthReturnedWith(
+      1,
+      expect.stringMatching(new RegExp(`--db-url '${MOCK_DB_URL}'`))
+    )
 
     // console.log(new RegExp(`-f '${expectPathRegex.source}'`))
-    expect($Mock).to.toHaveNthReturnedWith(1,
-      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/roles\.sql'`)))
-    expect($Mock).to.toHaveNthReturnedWith(2,
-      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/schema\.sql'`)))
-    expect($Mock).to.toHaveNthReturnedWith(3,
-      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/data\.sql'`)))
+    expect($Mock).to.toHaveNthReturnedWith(
+      1,
+      expect.stringMatching(
+        new RegExp(`-f '${expectPathRegex.source}\/roles\.sql'`)
+      )
+    )
+    expect($Mock).to.toHaveNthReturnedWith(
+      2,
+      expect.stringMatching(
+        new RegExp(`-f '${expectPathRegex.source}\/schema\.sql'`)
+      )
+    )
+    expect($Mock).to.toHaveNthReturnedWith(
+      3,
+      expect.stringMatching(
+        new RegExp(`-f '${expectPathRegex.source}\/data\.sql'`)
+      )
+    )
 
-    expect(setOutputMock).toHaveBeenNthCalledWith(1, 'files', (main.sqlFiles.map(sql => expect.stringMatching(new RegExp(`${expectPathRegex.source}\/${sql}`)))))
-
-
-
-    // Verify that all of the core library functions were called correctly
-    // expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    // expect(debugMock).toHaveBeenNthCalledWith(
-    //   2,
-    //   expect.stringMatching(timeRegex)
-    // )
-    // expect(debugMock).toHaveBeenNthCalledWith(
-    //   3,
-    //   expect.stringMatching(timeRegex)
-    // )
-    // expect(setOutputMock).toHaveBeenNthCalledWith(
-    //   1,
-    //   'time',
-    //   expect.stringMatching(timeRegex)
-    // )
+    expect(setOutputMock).toHaveBeenNthCalledWith(
+      1,
+      'files',
+      main.sqlFiles.map(sql =>
+        expect.stringMatching(new RegExp(`${expectPathRegex.source}\/${sql}`))
+      )
+    )
   })
 
-  it.skip('sets a failed status', async () => {
+  it('sets a failed status', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
+        case 'database_url':
+          return ''
         default:
           return ''
       }
@@ -110,9 +119,6 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
+    expect(setFailedMock).toBeCalled()
   })
 })
