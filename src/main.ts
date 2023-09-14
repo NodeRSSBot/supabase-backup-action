@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { formatInTimeZone } from 'date-fns-tz'
-import { $, path } from 'zx'
+import { $, fs, path } from 'zx'
 
 export const sqlFiles = ['roles.sql', 'schema.sql', 'data.sql']
 
@@ -19,6 +19,7 @@ export async function run(): Promise<void> {
     core.debug(`Database url: ${databaseUrl}`)
     const backupDir = formatInTimeZone(new Date(), timezone, backupPath)
     core.debug(`Backup dir: ${backupDir}`)
+    await fs.ensureDir(backupDir)
 
     await $`supabase db dump --db-url '${databaseUrl}' -f '${path.join(
       backupDir,
