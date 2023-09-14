@@ -7,7 +7,7 @@ import { vi, describe, it, expect } from 'vitest'
 // Mock the action's entrypoint
 const runMock = vi
   .spyOn(main, 'run')
-  .mockImplementation(() => Promise.resolve())
+  .mockImplementation(async () => Promise.resolve())
 
 describe('index', () => {
   it('calls run when imported', async () => {

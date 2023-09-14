@@ -9,9 +9,7 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest'
 import * as core from '@actions/core'
 import * as main from '../src/main'
-import { format } from 'date-fns'
 import * as zx from 'zx'
-import path from 'path'
 import { formatInTimeZone } from 'date-fns-tz'
 
 // Mock the GitHub Actions core library
@@ -31,9 +29,6 @@ const $Mock = vi.spyOn(zx, '$').mockImplementation((...args) => {
 // Mock the action's main function
 const runMock = vi.spyOn(main, 'run')
 const MOCK_DB_URL = 'postgres://postgres:password@127.0.0.1:5432/postgres'
-
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
 
 describe('action', () => {
   beforeEach(() => {
@@ -79,19 +74,19 @@ describe('action', () => {
     expect($Mock).to.toHaveNthReturnedWith(
       1,
       expect.stringMatching(
-        new RegExp(`-f '${expectPathRegex.source}\/roles\.sql'`)
+        new RegExp(`-f '${expectPathRegex.source}/roles.sql'`)
       )
     )
     expect($Mock).to.toHaveNthReturnedWith(
       2,
       expect.stringMatching(
-        new RegExp(`-f '${expectPathRegex.source}\/schema\.sql'`)
+        new RegExp(`-f '${expectPathRegex.source}/schema.sql'`)
       )
     )
     expect($Mock).to.toHaveNthReturnedWith(
       3,
       expect.stringMatching(
-        new RegExp(`-f '${expectPathRegex.source}\/data\.sql'`)
+        new RegExp(`-f '${expectPathRegex.source}/data.sql'`)
       )
     )
 
@@ -99,7 +94,7 @@ describe('action', () => {
       1,
       'files',
       main.sqlFiles.map(sql =>
-        expect.stringMatching(new RegExp(`${expectPathRegex.source}\/${sql}`))
+        expect.stringMatching(new RegExp(`${expectPathRegex.source}/${sql}`))
       )
     )
     expect(setOutputMock).toHaveBeenNthCalledWith(
