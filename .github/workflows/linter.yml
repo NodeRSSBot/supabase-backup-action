@@ -30,10 +30,12 @@ jobs:
           node-version: 18
           cache: npm
 
-      - name: Install Dependencies
-        id: install
-        run: npm ci
-
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          run_install: |
+            - args: [--frozen-lockfile]
+            
       - name: Lint Code Base
         id: super-linter
         uses: super-linter/super-linter/slim@v5
