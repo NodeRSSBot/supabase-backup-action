@@ -1,5 +1,5 @@
-name: 'Supabase action'
-description: 'Provide a description here'
+name: 'Supabase backup action'
+description: 'Backup supabase with its own cli in git repo'
 author: 'Your name or organization here'
 
 # Define your inputs here.
@@ -14,12 +14,12 @@ inputs:
   backup_path:
     description: 'directory to backup support date-fns format pattern'
     required: true
-    default: 'backup/yyyy-MM-ddTHH:mm:ssZ'
+    default: "'backup/'yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  files:
+    description: 'Output file paths'
 
 runs:
   using: node20

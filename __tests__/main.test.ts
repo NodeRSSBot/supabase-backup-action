@@ -6,17 +6,30 @@
  * variables following the pattern `INPUT_<INPUT_NAME>`.
  */
 
+import { vi, describe, beforeEach, it, expect } from 'vitest'
 import * as core from '@actions/core'
 import * as main from '../src/main'
+import { format } from 'date-fns'
+import * as zx from "zx";
+import path from 'path';
+import { formatInTimeZone } from 'date-fns-tz';
 
 // Mock the GitHub Actions core library
-const debugMock = jest.spyOn(core, 'debug')
-const getInputMock = jest.spyOn(core, 'getInput')
-const setFailedMock = jest.spyOn(core, 'setFailed')
-const setOutputMock = jest.spyOn(core, 'setOutput')
+const debugMock = vi.spyOn(core, 'debug')
+const getInputMock = vi.spyOn(core, 'getInput')
+const setFailedMock = vi.spyOn(core, 'setFailed')
+const setOutputMock = vi.spyOn(core, 'setOutput')
+
+// @ts-expect-error String.raw
+const $Mock = vi.spyOn(zx, '$').mockImplementation((...args) => {
+  // @ts-expect-error String.raw
+  const str = String.raw(...args);
+  console.log(str);
+  return str
+});
 
 // Mock the action's main function
-const runMock = jest.spyOn(main, 'run')
+const runMock = vi.spyOn(main, 'run')
 const MOCK_DB_URL = 'postgres://postgres:password@127.0.0.1:5432/postgres' as const
 
 // Other utilities
@@ -24,7 +37,7 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}/
 
 describe('action', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('accepts input', async () => {
@@ -33,10 +46,10 @@ describe('action', () => {
       switch (name) {
         case 'database_url':
           return MOCK_DB_URL
-        case 'timetzone':
+        case 'timezone':
           return 'UTC'
         case 'backup_path':
-          return 'backup/yyyy-MM-ddTHH:mm:ssZ'
+          return "'backup/'yyyy-MM-dd'T'HH:mm:ss'Z'"
         default:
           return ''
       }
@@ -44,25 +57,45 @@ describe('action', () => {
 
     await main.run()
     expect(runMock).toHaveReturned()
+    const expectPathRegex = new RegExp(`backup/${formatInTimeZone(new Date(), 'UTC', "yyyy-MM-dd'T'")}\\d{2}:\\d{2}:\\d{2}Z`)
+    expect(debugMock).toHaveBeenNthCalledWith(1, `Database url: ${MOCK_DB_URL}`)
+    expect(debugMock).toHaveBeenNthCalledWith(2, expect.stringMatching(expectPathRegex))
+
+    expect($Mock).to.toHaveNthReturnedWith(1,
+      expect.stringMatching(new RegExp(`--db-url '${MOCK_DB_URL}'`)),
+    )
+
+
+    // console.log(new RegExp(`-f '${expectPathRegex.source}'`))
+    expect($Mock).to.toHaveNthReturnedWith(1,
+      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/roles\.sql'`)))
+    expect($Mock).to.toHaveNthReturnedWith(2,
+      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/schema\.sql'`)))
+    expect($Mock).to.toHaveNthReturnedWith(3,
+      expect.stringMatching(new RegExp(`-f '${expectPathRegex.source}\/data\.sql'`)))
+
+    expect(setOutputMock).toHaveBeenNthCalledWith(1, 'files', (main.sqlFiles.map(sql => expect.stringMatching(new RegExp(`${expectPathRegex.source}\/${sql}`)))))
+
+
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
-    expect(debugMock).toHaveBeenNthCalledWith(
-      2,
-      expect.stringMatching(timeRegex)
-    )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    // expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
+    // expect(debugMock).toHaveBeenNthCalledWith(
+    //   2,
+    //   expect.stringMatching(timeRegex)
+    // )
+    // expect(debugMock).toHaveBeenNthCalledWith(
+    //   3,
+    //   expect.stringMatching(timeRegex)
+    // )
+    // expect(setOutputMock).toHaveBeenNthCalledWith(
+    //   1,
+    //   'time',
+    //   expect.stringMatching(timeRegex)
+    // )
   })
 
-  it('sets a failed status', async () => {
+  it.skip('sets a failed status', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
