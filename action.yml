@@ -1,6 +1,6 @@
 name: 'Supabase backup action'
 description: 'Backup supabase with its own cli in git repo'
-author: 'Your name or organization here'
+author: 'fengkx'
 
 # Define your inputs here.
 inputs:
