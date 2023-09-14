@@ -102,6 +102,11 @@ describe('action', () => {
         expect.stringMatching(new RegExp(`${expectPathRegex.source}\/${sql}`))
       )
     )
+    expect(setOutputMock).toHaveBeenNthCalledWith(
+      2,
+      'dir',
+      expect.stringMatching(expectPathRegex)
+    )
   })
 
   it('sets a failed status', async () => {

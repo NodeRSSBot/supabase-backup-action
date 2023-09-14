@@ -38,6 +38,7 @@ export async function run(): Promise<void> {
       'files',
       sqlFiles.map(f => path.join(backupDir, f))
     )
+    core.setOutput('dir', backupDir)
   } catch (error: any) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.stack)

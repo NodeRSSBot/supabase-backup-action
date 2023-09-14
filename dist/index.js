@@ -29693,6 +29693,7 @@ async function run() {
         await core_$ `supabase db dump --db-url '${databaseUrl}' -f '${external_node_path_namespaceObject.join(backupDir, 'schema.sql')}'`;
         await core_$ `supabase db dump --db-url '${databaseUrl}' -f '${external_node_path_namespaceObject.join(backupDir, 'data.sql')}' --use-copy --data-only`;
         core.setOutput('files', sqlFiles.map(f => external_node_path_namespaceObject.join(backupDir, f)));
+        core.setOutput('dir', backupDir);
     }
     catch (error) {
         // Fail the workflow run if an error occurs

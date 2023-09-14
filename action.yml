@@ -20,6 +20,8 @@ inputs:
 outputs:
   files:
     description: 'Output file paths'
+  dir:
+    description: 'backup dir'
 
 runs:
   using: node20
