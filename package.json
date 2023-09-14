@@ -26,6 +26,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "prepare": "npx simple-git-hooks",
     "bundle": "npm run format:write && npm run package",
     "ci-test": "vitest run",
     "format:write": "prettier --write **/*.ts",
@@ -60,6 +61,7 @@
     "make-coverage-badge": "^1.2.0",
     "prettier": "^3.0.3",
     "prettier-eslint": "^15.0.1",
+    "simple-git-hooks": "^2.9.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.4"
   },
@@ -76,5 +78,8 @@
       "object.groupby": "npm:@nolyfill/object.groupby@latest",
       "object.values": "npm:@nolyfill/object.values@latest"
     }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npm run all"
   }
 }
