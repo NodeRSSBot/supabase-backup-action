@@ -17,6 +17,7 @@ const setOutputMock = jest.spyOn(core, 'setOutput')
 
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
+const MOCK_DB_URL = 'postgres://postgres:password@127.0.0.1:5432/postgres' as const
 
 // Other utilities
 const timeRegex = /^\d{2}:\d{2}:\d{2}/
@@ -26,12 +27,16 @@ describe('action', () => {
     jest.clearAllMocks()
   })
 
-  it('sets the time output', async () => {
+  it('accepts input', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation((name: string): string => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'database_url':
+          return MOCK_DB_URL
+        case 'timetzone':
+          return 'UTC'
+        case 'backup_path':
+          return 'backup/yyyy-MM-ddTHH:mm:ssZ'
         default:
           return ''
       }

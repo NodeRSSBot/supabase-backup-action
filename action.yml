@@ -1,13 +1,20 @@
-name: 'The name of your action here'
+name: 'Supabase action'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  database_url:
+    description: 'Postgres DataBase URL of your supabase project'
     required: true
-    default: '1000'
+  timezone:
+    description: 'file path Format time zone'
+    required: true
+    default: 'UTC'
+  backup_path:
+    description: 'directory to backup support date-fns format pattern'
+    required: true
+    default: 'backup/yyyy-MM-ddTHH:mm:ssZ'
 
 # Define your outputs here.
 outputs:
