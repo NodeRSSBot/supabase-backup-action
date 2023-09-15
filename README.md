@@ -1,4 +1,8 @@
-# Supabase backup
+# Supabase backup action
+
+[![GitHub Super-Linter](https://github.com/actions/typescript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
+![CI](https://github.com/actions/typescript-action/actions/workflows/ci.yml/badge.svg)
+![Coverage](./badges/coverage.svg)
 
 > Backup supabase using supabase cli
 
