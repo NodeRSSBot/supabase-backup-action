@@ -41,6 +41,7 @@ jobs:
         with:
           # The commit message for the commit.
           commit_message: 'backup'
+          commit_author: Author <actions@github.com>
           file_pattern: ${{ steps.backup.outputs.dir }}
           
 ``````
