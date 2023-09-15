@@ -49,3 +49,6 @@ jobs:
           file_pattern: ${{ steps.backup.outputs.dir }}
           
 ``````
+
+## Real world exmple
+real world setup contains old files delte, zstd compress [NodeRSSBot/backup-action-demo](https://github.com/NodeRSSBot/backup-action-demo)
