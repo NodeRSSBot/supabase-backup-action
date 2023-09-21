@@ -63,7 +63,7 @@
     "prettier-eslint": "^15.0.1",
     "simple-git-hooks": "^2.9.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.4"
+    "vitest": "^0.34.5"
   },
   "pnpm": {
     "overrides": {
